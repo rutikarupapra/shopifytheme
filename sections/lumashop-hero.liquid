@@ -46,7 +46,7 @@
             {%- endif -%}
             {%- if block.settings.button_label != blank -%}
               <a class="lm-hero__button" href="{{ block.settings.button_link | default: '#' }}">
-                <span class="lm-hero__button-label test123">{{ block.settings.button_label }}</span>
+                <span class="lm-hero__button-label test123">{{ block.settings.button_label }} test123</span>
                 {% render 'lumashop-icon', name: 'chevron-right' %}
               </a>
             {%- endif -%}
