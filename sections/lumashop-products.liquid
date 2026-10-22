@@ -1,0 +1,200 @@
+{%- liquid
+  assign s = section.settings
+  assign placeholder_names = 'Écouteurs sans fil,Montre connectée,Sweat à capuche,Parfum femme' | split: ','
+  assign placeholder_prices = '7 990 DA,12 990 DA,4 990 DA,6 990 DA' | split: ','
+  assign placeholder_old = '9 990 DA,15 490 DA,6 690 DA,7 790 DA' | split: ','
+  assign placeholder_discounts = '20,15,25,10' | split: ','
+-%}
+
+{%- style -%}
+  #shopify-section-{{ section.id }} .lm-products {
+    {%- if s.bg_color != blank -%}--lm-prod-bg: {{ s.bg_color }};{%- endif -%}
+    {%- if s.eyebrow_color != blank -%}--lm-prod-eyebrow-color: {{ s.eyebrow_color }};{%- endif -%}
+    {%- if s.heading_color != blank -%}--lm-prod-heading-color: {{ s.heading_color }};{%- endif -%}
+    {%- if s.card_bg != blank -%}--lm-prod-card-bg: {{ s.card_bg }};{%- endif -%}
+    {%- if s.image_bg != blank -%}--lm-prod-image-bg: {{ s.image_bg }};{%- endif -%}
+    {%- if s.name_color != blank -%}--lm-prod-name-color: {{ s.name_color }};{%- endif -%}
+    {%- if s.price_color != blank -%}--lm-prod-price-color: {{ s.price_color }};{%- endif -%}
+    {%- if s.old_price_color != blank -%}--lm-prod-old-price-color: {{ s.old_price_color }};{%- endif -%}
+    {%- if s.badge_bg != blank -%}--lm-prod-badge-bg: {{ s.badge_bg }};{%- endif -%}
+    {%- if s.badge_color != blank -%}--lm-prod-badge-color: {{ s.badge_color }};{%- endif -%}
+    {%- if s.star_color != blank -%}--lm-prod-star-color: {{ s.star_color }};{%- endif -%}
+    {%- if s.button_bg != blank -%}--lm-prod-button-bg: {{ s.button_bg }};{%- endif -%}
+    {%- if s.button_color != blank -%}--lm-prod-button-color: {{ s.button_color }};{%- endif -%}
+    --lm-prod-columns: {{ s.columns_desktop }};
+    --lm-prod-columns-mobile: {{ s.columns_mobile }};
+    --lm-prod-gap: {{ s.gap }}px;
+    --lm-prod-heading-size: {{ s.heading_size | divided_by: 10.0 }}rem;
+    --lm-prod-eyebrow-size: {{ s.eyebrow_size | divided_by: 10.0 }}rem;
+    --lm-prod-name-size: {{ s.name_size | divided_by: 10.0 }}rem;
+    --lm-prod-price-size: {{ s.price_size | divided_by: 10.0 }}rem;
+    --lm-prod-button-size: {{ s.button_size | divided_by: 10.0 }}rem;
+    --lm-prod-image-ratio: {{ s.image_ratio }};
+    --lm-prod-padding-top: {{ s.padding_top }}px;
+    --lm-prod-padding-bottom: {{ s.padding_bottom }}px;
+  }
+{%- endstyle -%}
+
+<div class="lm-products">
+  <div class="lm-products__inner">
+    <div class="lm-products__header">
+      <div class="lm-products__titles">
+        {%- if s.eyebrow != blank -%}<p class="lm-products__eyebrow">{{ s.eyebrow }}</p>{%- endif -%}
+        {%- if s.heading != blank -%}<h2 class="lm-products__heading">{{ s.heading }}</h2>{%- endif -%}
+      </div>
+      {%- if s.button_label != blank -%}
+        <a class="lm-products__view-all" href="{{ s.button_link | default: s.collection.url | default: routes.all_products_collection_url }}">
+          <span class="lm-products__view-all-label">{{ s.button_label }}</span>
+          {% render 'lumashop-icon', name: 'chevron-right' %}
+        </a>
+      {%- endif -%}
+    </div>
+
+    <ul class="lm-products__grid">
+      {%- if s.collection != blank and s.collection.products.size > 0 -%}
+        {%- for product in s.collection.products limit: s.products_to_show -%}
+          {%- liquid
+            assign discount = 0
+            if product.compare_at_price > product.price
+              assign diff = product.compare_at_price | minus: product.price
+              assign discount = diff | times: 100.0 | divided_by: product.compare_at_price | round
+            endif
+            assign rating = product.metafields.reviews.rating.value
+          -%}
+          <li class="lm-products__item">
+            <article class="lm-products__card">
+              <div class="lm-products__media">
+                {%- if discount > 0 and s.show_badge -%}<span class="lm-products__badge">-{{ discount }}%</span>{%- endif -%}
+                {%- if s.show_wishlist -%}
+                  <button type="button" class="lm-products__wishlist" data-lm-wishlist="{{ product.id }}" aria-pressed="false" aria-label="Wishlist">{% render 'lumashop-icon', name: 'heart' %}</button>
+                {%- endif -%}
+                <a class="lm-products__media-link" href="{{ product.url }}" tabindex="-1">
+                  {%- if product.featured_media != blank -%}
+                    {{ product.featured_media | image_url: width: 600 | image_tag: class: 'lm-products__image', widths: '300, 450, 600', sizes: '(min-width: 990px) 25vw, 50vw', loading: 'lazy', alt: product.title }}
+                  {%- else -%}
+                    <img class="lm-products__image lm-products__image--placeholder" src="{{ 'lumashop-ph-product-1.svg' | asset_url }}" alt="" width="400" height="400" loading="lazy">
+                  {%- endif -%}
+                </a>
+              </div>
+              <div class="lm-products__info">
+                <h3 class="lm-products__name"><a class="lm-products__name-link" href="{{ product.url }}">{{ product.title }}</a></h3>
+                {%- if s.show_rating -%}
+                  <div class="lm-products__rating">
+                    <span class="lm-products__stars" aria-hidden="true">
+                      {%- for i in (1..5) -%}<span class="lm-products__star{% if rating != blank and i > rating.rating %} is-empty{% endif %}">{% render 'lumashop-icon', name: 'star' %}</span>{%- endfor -%}
+                    </span>
+                    {%- if product.metafields.reviews.rating_count != blank -%}<span class="lm-products__rating-count">({{ product.metafields.reviews.rating_count }})</span>{%- endif -%}
+                  </div>
+                {%- endif -%}
+                <p class="lm-products__price">
+                  <span class="lm-products__price-current">{{ product.price | money }}</span>
+                  {%- if discount > 0 -%}<s class="lm-products__price-old">{{ product.compare_at_price | money }}</s>{%- endif -%}
+                </p>
+                {%- if s.show_button -%}
+                  {%- if product.available and product.variants.size == 1 -%}
+                    {%- form 'product', product, class: 'lm-products__form' -%}
+                      <input type="hidden" name="id" value="{{ product.selected_or_first_available_variant.id }}">
+                      <button type="submit" class="lm-products__button">{% render 'lumashop-icon', name: 'cart' %}<span class="lm-products__button-label">{{ s.add_label }}</span></button>
+                    {%- endform -%}
+                  {%- else -%}
+                    <a class="lm-products__button" href="{{ product.url }}">{% render 'lumashop-icon', name: 'cart' %}<span class="lm-products__button-label">{% if product.available %}{{ s.choose_label }}{% else %}{{ s.sold_out_label }}{% endif %}</span></a>
+                  {%- endif -%}
+                {%- endif -%}
+              </div>
+            </article>
+          </li>
+        {%- endfor -%}
+      {%- else -%}
+        {%- for i in (0..3) -%}
+          {%- assign n = i | plus: 1 -%}
+          <li class="lm-products__item">
+            <article class="lm-products__card">
+              <div class="lm-products__media">
+                {%- if s.show_badge -%}<span class="lm-products__badge">-{{ placeholder_discounts[i] }}%</span>{%- endif -%}
+                {%- if s.show_wishlist -%}
+                  <button type="button" class="lm-products__wishlist" data-lm-wishlist="ph-{{ n }}" aria-pressed="false" aria-label="Wishlist">{% render 'lumashop-icon', name: 'heart' %}</button>
+                {%- endif -%}
+                <a class="lm-products__media-link" href="#" tabindex="-1">
+                  <img class="lm-products__image lm-products__image--placeholder" src="{{ 'lumashop-ph-product-' | append: n | append: '.svg' | asset_url }}" alt="" width="400" height="400" loading="lazy">
+                </a>
+              </div>
+              <div class="lm-products__info">
+                <h3 class="lm-products__name"><a class="lm-products__name-link" href="#">{{ placeholder_names[i] }}</a></h3>
+                {%- if s.show_rating -%}
+                  <div class="lm-products__rating">
+                    <span class="lm-products__stars" aria-hidden="true">{%- for k in (1..5) -%}<span class="lm-products__star">{% render 'lumashop-icon', name: 'star' %}</span>{%- endfor -%}</span>
+                    <span class="lm-products__rating-count">(124)</span>
+                  </div>
+                {%- endif -%}
+                <p class="lm-products__price">
+                  <span class="lm-products__price-current">{{ placeholder_prices[i] }}</span>
+                  <s class="lm-products__price-old">{{ placeholder_old[i] }}</s>
+                </p>
+                {%- if s.show_button -%}
+                  <a class="lm-products__button" href="#">{% render 'lumashop-icon', name: 'cart' %}<span class="lm-products__button-label">{{ s.add_label }}</span></a>
+                {%- endif -%}
+              </div>
+            </article>
+          </li>
+        {%- endfor -%}
+      {%- endif -%}
+    </ul>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "LumaShop Products",
+  "tag": "section",
+  "class": "lm-section-products",
+  "settings": [
+    { "type": "header", "content": "Heading" },
+    { "type": "text", "id": "eyebrow", "label": "Small title", "default": "PRODUITS PHARES" },
+    { "type": "text", "id": "heading", "label": "Heading", "default": "Les coups de cœur du moment" },
+    { "type": "text", "id": "button_label", "label": "'View all' label", "default": "Voir tout" },
+    { "type": "url", "id": "button_link", "label": "'View all' link (empty = collection)" },
+    { "type": "header", "content": "Products (empty collection = 4 demo placeholders)" },
+    { "type": "collection", "id": "collection", "label": "Collection" },
+    { "type": "range", "id": "products_to_show", "label": "Products to show", "min": 2, "max": 12, "step": 1, "default": 4 },
+    { "type": "checkbox", "id": "show_badge", "label": "Show discount badge", "default": true },
+    { "type": "checkbox", "id": "show_wishlist", "label": "Show heart button", "default": true },
+    { "type": "checkbox", "id": "show_rating", "label": "Show rating stars", "default": true },
+    { "type": "checkbox", "id": "show_button", "label": "Show add to cart button", "default": true },
+    { "type": "text", "id": "add_label", "label": "Add to cart label", "default": "Ajouter au panier" },
+    { "type": "text", "id": "choose_label", "label": "Choose options label", "default": "Choisir les options" },
+    { "type": "text", "id": "sold_out_label", "label": "Sold out label", "default": "Épuisé" },
+    { "type": "header", "content": "Layout" },
+    { "type": "range", "id": "columns_desktop", "label": "Columns (desktop)", "min": 2, "max": 6, "step": 1, "default": 4 },
+    { "type": "select", "id": "columns_mobile", "label": "Columns (mobile)", "options": [{ "value": "1", "label": "1" }, { "value": "2", "label": "2" }], "default": "2" },
+    { "type": "range", "id": "gap", "label": "Gap between cards", "min": 8, "max": 48, "step": 2, "unit": "px", "default": 20 },
+    { "type": "select", "id": "image_ratio", "label": "Image ratio", "default": "1 / 0.85", "options": [
+      { "value": "1 / 1", "label": "Square" },
+      { "value": "1 / 0.85", "label": "Landscape-ish" },
+      { "value": "3 / 4", "label": "Portrait" }
+    ] },
+    { "type": "range", "id": "padding_top", "label": "Top padding", "min": 0, "max": 120, "step": 4, "unit": "px", "default": 40 },
+    { "type": "range", "id": "padding_bottom", "label": "Bottom padding", "min": 0, "max": 120, "step": 4, "unit": "px", "default": 40 },
+    { "type": "header", "content": "Font sizes" },
+    { "type": "range", "id": "eyebrow_size", "label": "Small title size", "min": 9, "max": 18, "step": 1, "unit": "px", "default": 11 },
+    { "type": "range", "id": "heading_size", "label": "Heading size", "min": 18, "max": 56, "step": 1, "unit": "px", "default": 26 },
+    { "type": "range", "id": "name_size", "label": "Product name size", "min": 11, "max": 22, "step": 1, "unit": "px", "default": 13 },
+    { "type": "range", "id": "price_size", "label": "Price size", "min": 11, "max": 26, "step": 1, "unit": "px", "default": 16 },
+    { "type": "range", "id": "button_size", "label": "Button text size", "min": 10, "max": 20, "step": 1, "unit": "px", "default": 12 },
+    { "type": "header", "content": "Colors (leave empty to use global LumaShop colors)" },
+    { "type": "color", "id": "bg_color", "label": "Section background" },
+    { "type": "color", "id": "eyebrow_color", "label": "Small title / line" },
+    { "type": "color", "id": "heading_color", "label": "Heading" },
+    { "type": "color", "id": "card_bg", "label": "Card background" },
+    { "type": "color", "id": "image_bg", "label": "Image area background" },
+    { "type": "color", "id": "name_color", "label": "Product name" },
+    { "type": "color", "id": "price_color", "label": "Price" },
+    { "type": "color", "id": "old_price_color", "label": "Old price" },
+    { "type": "color", "id": "badge_bg", "label": "Badge background" },
+    { "type": "color", "id": "badge_color", "label": "Badge text" },
+    { "type": "color", "id": "star_color", "label": "Stars" },
+    { "type": "color", "id": "button_bg", "label": "Button background" },
+    { "type": "color", "id": "button_color", "label": "Button text" }
+  ],
+  "presets": [{ "name": "LumaShop Products" }]
+}
+{% endschema %}

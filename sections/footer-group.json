@@ -1,0 +1,19 @@
+{
+  "name": "Footer group",
+  "type": "footer",
+  "sections": {
+    "lumashop-footer": {
+      "type": "lumashop-footer",
+      "blocks": {
+        "links-1": { "type": "links", "settings": { "heading": "Liens utiles", "menu": "main-menu" } },
+        "links-2": { "type": "links", "settings": { "heading": "Service client", "menu": "footer" } },
+        "social-1": { "type": "social", "settings": { "heading": "Suivez-nous", "show_newsletter": true } }
+      },
+      "block_order": ["links-1", "links-2", "social-1"],
+      "settings": {
+        "legal_menu": "footer"
+      }
+    }
+  },
+  "order": ["lumashop-footer"]
+}

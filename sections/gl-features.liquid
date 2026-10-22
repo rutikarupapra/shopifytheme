@@ -1,0 +1,91 @@
+{%- liquid
+  assign s = section.settings
+-%}
+
+{%- style -%}
+  #shopify-section-{{ section.id }} .gl-features {
+    {%- if s.bar_bg != blank -%}--gl-feat-bg: {{ s.bar_bg }};{%- endif -%}
+    {%- if s.icon_color != blank -%}--gl-feat-icon-color: {{ s.icon_color }};{%- endif -%}
+    {%- if s.title_color != blank -%}--gl-feat-title-color: {{ s.title_color }};{%- endif -%}
+    {%- if s.text_color != blank -%}--gl-feat-text-color: {{ s.text_color }};{%- endif -%}
+    --gl-feat-title-size: {{ s.title_size | divided_by: 10.0 }}rem;
+    --gl-feat-text-size: {{ s.text_size | divided_by: 10.0 }}rem;
+    --gl-feat-icon-size: {{ s.icon_size }}px;
+    --gl-feat-padding-top: {{ s.padding_top }}px;
+    --gl-feat-padding-bottom: {{ s.padding_bottom }}px;
+  }
+{%- endstyle -%}
+
+<div class="gl-features">
+  <div class="gl-features__inner">
+    <ul class="gl-features__bar">
+      {%- for block in section.blocks -%}
+        <li class="gl-features__item" {{ block.shopify_attributes }}>
+          <span class="gl-features__icon">{% render 'gl-icon', name: block.settings.icon %}</span>
+          <span class="gl-features__text">
+            <strong class="gl-features__title">{{ block.settings.title }}</strong>
+            <span class="gl-features__sub">{{ block.settings.text }}</span>
+          </span>
+        </li>
+      {%- endfor -%}
+    </ul>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Glow Features Bar",
+  "tag": "section",
+  "class": "gl-section-features",
+  "max_blocks": 6,
+  "settings": [
+    { "type": "range", "id": "icon_size", "label": "Icon size", "min": 20, "max": 56, "step": 2, "unit": "px", "default": 34 },
+    { "type": "range", "id": "title_size", "label": "Title size", "min": 10, "max": 20, "step": 1, "unit": "px", "default": 12 },
+    { "type": "range", "id": "text_size", "label": "Text size", "min": 10, "max": 18, "step": 1, "unit": "px", "default": 12 },
+    { "type": "range", "id": "padding_top", "label": "Top padding", "min": 0, "max": 120, "step": 4, "unit": "px", "default": 20 },
+    { "type": "range", "id": "padding_bottom", "label": "Bottom padding", "min": 0, "max": 120, "step": 4, "unit": "px", "default": 36 },
+    { "type": "header", "content": "Colors (leave empty to use global Landing colors)" },
+    { "type": "color", "id": "bar_bg", "label": "Bar background" },
+    { "type": "color", "id": "icon_color", "label": "Icon" },
+    { "type": "color", "id": "title_color", "label": "Title" },
+    { "type": "color", "id": "text_color", "label": "Text" }
+  ],
+  "blocks": [
+    {
+      "type": "feature",
+      "name": "Feature",
+      "settings": [
+        {
+          "type": "select",
+          "id": "icon",
+          "label": "Icon",
+          "options": [
+            { "value": "truck", "label": "Truck" },
+            { "value": "shield", "label": "Shield" },
+            { "value": "refresh", "label": "Refresh" },
+            { "value": "headset", "label": "Headset" },
+            { "value": "leaf", "label": "Leaf" },
+            { "value": "drop", "label": "Drop" },
+            { "value": "heart", "label": "Heart" },
+            { "value": "mail", "label": "Mail" }
+          ],
+          "default": "truck"
+        },
+        { "type": "text", "id": "title", "label": "Title", "default": "FREE SHIPPING" },
+        { "type": "text", "id": "text", "label": "Text", "default": "On orders over $50" }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Glow Features Bar",
+      "blocks": [
+        { "type": "feature", "settings": { "icon": "truck", "title": "FREE SHIPPING", "text": "On orders over $50" } },
+        { "type": "feature", "settings": { "icon": "shield", "title": "SECURE PAYMENT", "text": "100% safe & secure" } },
+        { "type": "feature", "settings": { "icon": "refresh", "title": "EASY RETURNS", "text": "30 days return policy" } },
+        { "type": "feature", "settings": { "icon": "headset", "title": "CUSTOMER SUPPORT", "text": "We're here to help" } }
+      ]
+    }
+  ]
+}
+{% endschema %}

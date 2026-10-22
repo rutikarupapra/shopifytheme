@@ -1,0 +1,39 @@
+{
+  "sections": {
+    "lumashop_hero": {
+      "type": "lumashop-hero",
+      "blocks": {
+        "slide-1": { "type": "slide", "settings": {} },
+        "slide-2": { "type": "slide", "settings": { "badge": "Tendance", "title": "Une sélection pensée", "title_highlight": "pour votre style de vie" } },
+        "slide-3": { "type": "slide", "settings": { "badge": "Promo", "title": "Jusqu'à -25% sur", "title_highlight": "vos produits préférés" } },
+        "feature-1": { "type": "feature", "settings": { "icon": "truck", "text": "Livraison rapide partout en Algérie" } },
+        "feature-2": { "type": "feature", "settings": { "icon": "shield", "text": "Paiement sécurisé 100% fiable" } },
+        "feature-3": { "type": "feature", "settings": { "icon": "headset", "text": "Service client à votre écoute" } }
+      },
+      "block_order": ["slide-1", "slide-2", "slide-3", "feature-1", "feature-2", "feature-3"],
+      "settings": {}
+    },
+    "lumashop_categories": {
+      "type": "lumashop-categories",
+      "blocks": {
+        "cat-1": { "type": "category", "settings": { "title": "Électronique" } },
+        "cat-2": { "type": "category", "settings": { "title": "Mode" } },
+        "cat-3": { "type": "category", "settings": { "title": "Beauté & Soins" } },
+        "cat-4": { "type": "category", "settings": { "title": "Maison & Déco" } },
+        "cat-5": { "type": "category", "settings": { "title": "Sport & Loisirs" } },
+        "cat-6": { "type": "category", "settings": { "title": "Jouets" } }
+      },
+      "block_order": ["cat-1", "cat-2", "cat-3", "cat-4", "cat-5", "cat-6"],
+      "settings": {}
+    },
+    "lumashop_products": {
+      "type": "lumashop-products",
+      "settings": {}
+    },
+    "lumashop_promo": {
+      "type": "lumashop-promo",
+      "settings": {}
+    }
+  },
+  "order": ["lumashop_hero", "lumashop_categories", "lumashop_products", "lumashop_promo"]
+}

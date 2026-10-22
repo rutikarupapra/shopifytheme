@@ -1,0 +1,173 @@
+{%- liquid
+  assign s = section.settings
+  assign slides = section.blocks | where: 'type', 'slide'
+  assign features = section.blocks | where: 'type', 'feature'
+-%}
+
+{%- style -%}
+  #shopify-section-{{ section.id }} .lm-hero {
+    {%- if s.bg_start != blank -%}--lm-hero-bg-start: {{ s.bg_start }};{%- endif -%}
+    {%- if s.bg_end != blank -%}--lm-hero-bg-end: {{ s.bg_end }};{%- endif -%}
+    {%- if s.title_color != blank -%}--lm-hero-title-color: {{ s.title_color }};{%- endif -%}
+    {%- if s.highlight_color != blank -%}--lm-hero-highlight-color: {{ s.highlight_color }};{%- endif -%}
+    {%- if s.text_color != blank -%}--lm-hero-text-color: {{ s.text_color }};{%- endif -%}
+    {%- if s.button_bg != blank -%}--lm-hero-button-bg: {{ s.button_bg }};{%- endif -%}
+    {%- if s.button_color != blank -%}--lm-hero-button-color: {{ s.button_color }};{%- endif -%}
+    {%- if s.feature_icon_color != blank -%}--lm-hero-feature-icon-color: {{ s.feature_icon_color }};{%- endif -%}
+    {%- if s.feature_text_color != blank -%}--lm-hero-feature-text-color: {{ s.feature_text_color }};{%- endif -%}
+    --lm-hero-title-size: {{ s.title_size | divided_by: 10.0 }}rem;
+    --lm-hero-title-size-mobile: {{ s.title_size_mobile | divided_by: 10.0 }}rem;
+    --lm-hero-text-size: {{ s.text_size | divided_by: 10.0 }}rem;
+    --lm-hero-button-size: {{ s.button_size | divided_by: 10.0 }}rem;
+    --lm-hero-padding-top: {{ s.padding_top }}px;
+    --lm-hero-padding-bottom: {{ s.padding_bottom }}px;
+    --lm-hero-min-height: {{ s.min_height }}px;
+    --lm-hero-image-width: {{ s.image_width }}%;
+  }
+{%- endstyle -%}
+
+<div class="lm-hero" data-lm-slider data-autoplay="{{ s.autoplay }}" data-speed="{{ s.speed | times: 1000 }}">
+  <div class="lm-hero__frame">
+    <div class="lm-hero__slides" data-lm-slides>
+      {%- for block in slides -%}
+        <div class="lm-hero__slide{% if forloop.first %} is-active{% endif %}" data-lm-slide {{ block.shopify_attributes }}>
+          <div class="lm-hero__content">
+            {%- if block.settings.badge != blank -%}
+              <span class="lm-hero__badge">{% render 'lumashop-icon', name: 'sparkle' %}{{ block.settings.badge }}</span>
+            {%- endif -%}
+            <h2 class="lm-hero__title">
+              <span class="lm-hero__title-line">{{ block.settings.title }}</span>
+              {%- if block.settings.title_highlight != blank -%}
+                <span class="lm-hero__title-highlight">{{ block.settings.title_highlight }}</span>
+              {%- endif -%}
+            </h2>
+            {%- if block.settings.text != blank -%}
+              <div class="lm-hero__text">{{ block.settings.text }}</div>
+            {%- endif -%}
+            {%- if block.settings.button_label != blank -%}
+              <a class="lm-hero__button" href="{{ block.settings.button_link | default: '#' }}">
+                <span class="lm-hero__button-label">{{ block.settings.button_label }}</span>
+                {% render 'lumashop-icon', name: 'chevron-right' %}
+              </a>
+            {%- endif -%}
+
+            {%- if features.size > 0 -%}
+              <ul class="lm-hero__features">
+                {%- for feature in features -%}
+                  <li class="lm-hero__feature" {{ feature.shopify_attributes }}>
+                    <span class="lm-hero__feature-icon">{% render 'lumashop-icon', name: feature.settings.icon %}</span>
+                    <span class="lm-hero__feature-text">{{ feature.settings.text }}</span>
+                  </li>
+                {%- endfor -%}
+              </ul>
+            {%- endif -%}
+          </div>
+
+          <div class="lm-hero__media">
+            {%- assign img_loading = 'lazy' -%}
+            {%- if forloop.first -%}{%- assign img_loading = 'eager' -%}{%- endif -%}
+            {%- if block.settings.image != blank -%}
+              {{ block.settings.image | image_url: width: 1400 | image_tag: class: 'lm-hero__image', sizes: '(min-width: 990px) 55vw, 100vw', widths: '600, 900, 1200, 1400', loading: img_loading }}
+            {%- else -%}
+              <img class="lm-hero__image lm-hero__image--placeholder" src="{{ 'lumashop-ph-hero.svg' | asset_url }}" alt="" width="700" height="600" loading="{{ img_loading }}">
+            {%- endif -%}
+          </div>
+        </div>
+      {%- endfor -%}
+    </div>
+
+    {%- if s.show_arrows and slides.size > 1 -%}
+      <button type="button" class="lm-hero__arrow lm-hero__arrow--prev" data-lm-prev aria-label="Previous slide">{% render 'lumashop-icon', name: 'chevron-left' %}</button>
+      <button type="button" class="lm-hero__arrow lm-hero__arrow--next" data-lm-next aria-label="Next slide">{% render 'lumashop-icon', name: 'chevron-right' %}</button>
+    {%- endif -%}
+
+    {%- if s.show_dots and slides.size > 1 -%}
+      <div class="lm-hero__dots">
+        {%- for block in slides -%}
+          <button type="button" class="lm-hero__dot{% if forloop.first %} is-active{% endif %}" data-lm-dot="{{ forloop.index0 }}" aria-label="Slide {{ forloop.index }}"></button>
+        {%- endfor -%}
+      </div>
+    {%- endif -%}
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "LumaShop Hero Slider",
+  "tag": "section",
+  "class": "lm-section-hero",
+  "max_blocks": 10,
+  "settings": [
+    { "type": "header", "content": "Slider" },
+    { "type": "checkbox", "id": "autoplay", "label": "Autoplay", "default": true },
+    { "type": "range", "id": "speed", "label": "Seconds per slide", "min": 3, "max": 12, "step": 1, "unit": "s", "default": 6 },
+    { "type": "checkbox", "id": "show_arrows", "label": "Show arrows", "default": true },
+    { "type": "checkbox", "id": "show_dots", "label": "Show dots", "default": true },
+    { "type": "range", "id": "min_height", "label": "Banner min height", "min": 320, "max": 720, "step": 10, "unit": "px", "default": 480 },
+    { "type": "range", "id": "image_width", "label": "Image width (desktop)", "min": 35, "max": 65, "step": 1, "unit": "%", "default": 52 },
+    { "type": "range", "id": "padding_top", "label": "Top padding", "min": 0, "max": 120, "step": 4, "unit": "px", "default": 8 },
+    { "type": "range", "id": "padding_bottom", "label": "Bottom padding", "min": 0, "max": 120, "step": 4, "unit": "px", "default": 0 },
+    { "type": "header", "content": "Font sizes" },
+    { "type": "range", "id": "title_size", "label": "Title size (desktop)", "min": 24, "max": 80, "step": 1, "unit": "px", "default": 38 },
+    { "type": "range", "id": "title_size_mobile", "label": "Title size (mobile)", "min": 20, "max": 48, "step": 1, "unit": "px", "default": 28 },
+    { "type": "range", "id": "text_size", "label": "Text size", "min": 12, "max": 24, "step": 1, "unit": "px", "default": 16 },
+    { "type": "range", "id": "button_size", "label": "Button text size", "min": 11, "max": 22, "step": 1, "unit": "px", "default": 14 },
+    { "type": "header", "content": "Colors (leave empty to use global LumaShop colors)" },
+    { "type": "color", "id": "bg_start", "label": "Background gradient start" },
+    { "type": "color", "id": "bg_end", "label": "Background gradient end" },
+    { "type": "color", "id": "title_color", "label": "Title" },
+    { "type": "color", "id": "highlight_color", "label": "Title highlight (2nd line)" },
+    { "type": "color", "id": "text_color", "label": "Text" },
+    { "type": "color", "id": "button_bg", "label": "Button background" },
+    { "type": "color", "id": "button_color", "label": "Button text" },
+    { "type": "color", "id": "feature_icon_color", "label": "Feature icon" },
+    { "type": "color", "id": "feature_text_color", "label": "Feature text" }
+  ],
+  "blocks": [
+    {
+      "type": "slide",
+      "name": "Slide",
+      "settings": [
+        { "type": "image_picker", "id": "image", "label": "Image (empty = placeholder)" },
+        { "type": "text", "id": "badge", "label": "Badge", "default": "Nouveau" },
+        { "type": "text", "id": "title", "label": "Title", "default": "Des produits qui" },
+        { "type": "text", "id": "title_highlight", "label": "Title highlight (colored line)", "default": "embellissent votre quotidien" },
+        { "type": "textarea", "id": "text", "label": "Text", "default": "Découvrez notre collection tendance et profitez d'une expérience d'achat simple, rapide et sécurisée." },
+        { "type": "text", "id": "button_label", "label": "Button label", "default": "Découvrir la boutique" },
+        { "type": "url", "id": "button_link", "label": "Button link" }
+      ]
+    },
+    {
+      "type": "feature",
+      "name": "Feature",
+      "limit": 4,
+      "settings": [
+        {
+          "type": "select", "id": "icon", "label": "Icon", "default": "truck",
+          "options": [
+            { "value": "truck", "label": "Truck" },
+            { "value": "shield", "label": "Shield" },
+            { "value": "headset", "label": "Headset" },
+            { "value": "gift", "label": "Gift" },
+            { "value": "return", "label": "Return" },
+            { "value": "star", "label": "Star" },
+            { "value": "heart", "label": "Heart" }
+          ]
+        },
+        { "type": "text", "id": "text", "label": "Text", "default": "Livraison rapide partout en Algérie" }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "LumaShop Hero Slider",
+      "blocks": [
+        { "type": "slide" },
+        { "type": "feature" },
+        { "type": "feature", "settings": { "icon": "shield", "text": "Paiement sécurisé 100% fiable" } },
+        { "type": "feature", "settings": { "icon": "headset", "text": "Service client à votre écoute" } }
+      ]
+    }
+  ]
+}
+{% endschema %}

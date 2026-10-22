@@ -1,0 +1,73 @@
+{
+  "sections": {
+    "gl_announcement": {
+      "type": "gl-announcement",
+      "blocks": {
+        "l1": { "type": "link", "settings": { "label": "Track Order" } },
+        "l2": { "type": "link", "settings": { "label": "FAQ" } },
+        "l3": { "type": "link", "settings": { "label": "Store Locator" } },
+        "l4": { "type": "link", "settings": { "label": "Contact Us" } }
+      },
+      "block_order": ["l1", "l2", "l3", "l4"],
+      "settings": {}
+    },
+    "gl_header": {
+      "type": "gl-header",
+      "settings": { "menu": "main-menu" }
+    },
+    "gl_hero": {
+      "type": "gl-hero",
+      "blocks": {
+        "f1": { "type": "feature", "settings": { "icon": "leaf", "title": "Natural Ingredients", "text": "Safe & Effective" } },
+        "f2": { "type": "feature", "settings": { "icon": "drop", "title": "Dermatologist Tested", "text": "For All Skin Types" } },
+        "f3": { "type": "feature", "settings": { "icon": "flask", "title": "Paraben & Sulfate Free", "text": "Clean & Gentle" } },
+        "f4": { "type": "feature", "settings": { "icon": "rabbit", "title": "Cruelty Free", "text": "Never Tested on Animals" } }
+      },
+      "block_order": ["f1", "f2", "f3", "f4"],
+      "settings": {}
+    },
+    "gl_categories": {
+      "type": "gl-categories",
+      "blocks": {
+        "c1": { "type": "category", "settings": { "title": "Serums" } },
+        "c2": { "type": "category", "settings": { "title": "Moisturizers" } },
+        "c3": { "type": "category", "settings": { "title": "Cleansers" } },
+        "c4": { "type": "category", "settings": { "title": "Toners" } },
+        "c5": { "type": "category", "settings": { "title": "Eye Care" } },
+        "c6": { "type": "category", "settings": { "title": "Sun Care" } }
+      },
+      "block_order": ["c1", "c2", "c3", "c4", "c5", "c6"],
+      "settings": {}
+    },
+    "gl_products": {
+      "type": "gl-products",
+      "settings": {}
+    },
+    "gl_offer": {
+      "type": "gl-offer",
+      "settings": {}
+    },
+    "gl_features": {
+      "type": "gl-features",
+      "blocks": {
+        "b1": { "type": "feature", "settings": { "icon": "truck", "title": "FREE SHIPPING", "text": "On orders over $50" } },
+        "b2": { "type": "feature", "settings": { "icon": "shield", "title": "SECURE PAYMENT", "text": "100% safe & secure" } },
+        "b3": { "type": "feature", "settings": { "icon": "refresh", "title": "EASY RETURNS", "text": "30 days return policy" } },
+        "b4": { "type": "feature", "settings": { "icon": "headset", "title": "CUSTOMER SUPPORT", "text": "We're here to help" } }
+      },
+      "block_order": ["b1", "b2", "b3", "b4"],
+      "settings": {}
+    },
+    "gl_footer": {
+      "type": "gl-footer",
+      "blocks": {
+        "k1": { "type": "links", "settings": { "heading": "Shop", "menu": "main-menu" } },
+        "k2": { "type": "links", "settings": { "heading": "Help", "menu": "footer" } },
+        "k3": { "type": "newsletter", "settings": {} }
+      },
+      "block_order": ["k1", "k2", "k3"],
+      "settings": { "legal_menu": "footer" }
+    }
+  },
+  "order": ["gl_announcement", "gl_header", "gl_hero", "gl_categories", "gl_products", "gl_offer", "gl_features", "gl_footer"]
+}

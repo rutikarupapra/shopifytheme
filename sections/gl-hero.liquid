@@ -1,0 +1,157 @@
+{%- liquid
+  assign s = section.settings
+  assign features = section.blocks | where: 'type', 'feature'
+-%}
+
+{%- style -%}
+  #shopify-section-{{ section.id }} .gl-hero {
+    {%- if s.bg_start != blank -%}--gl-hero-bg-start: {{ s.bg_start }};{%- endif -%}
+    {%- if s.bg_end != blank -%}--gl-hero-bg-end: {{ s.bg_end }};{%- endif -%}
+    {%- if s.eyebrow_color != blank -%}--gl-hero-eyebrow-color: {{ s.eyebrow_color }};{%- endif -%}
+    {%- if s.heading_color != blank -%}--gl-hero-heading-color: {{ s.heading_color }};{%- endif -%}
+    {%- if s.text_color != blank -%}--gl-hero-text-color: {{ s.text_color }};{%- endif -%}
+    {%- if s.button_bg != blank -%}--gl-hero-button-bg: {{ s.button_bg }};{%- endif -%}
+    {%- if s.button_color != blank -%}--gl-hero-button-color: {{ s.button_color }};{%- endif -%}
+    {%- if s.bar_bg != blank -%}--gl-hero-bar-bg: {{ s.bar_bg }};{%- endif -%}
+    {%- if s.bar_icon_color != blank -%}--gl-hero-bar-icon-color: {{ s.bar_icon_color }};{%- endif -%}
+    {%- if s.bar_text_color != blank -%}--gl-hero-bar-text-color: {{ s.bar_text_color }};{%- endif -%}
+    --gl-hero-min-height: {{ s.min_height }}px;
+    --gl-hero-image-width: {{ s.image_width }}%;
+    --gl-hero-overlay: {{ s.overlay_strength | divided_by: 100.0 }};
+    --gl-hero-heading-size: {{ s.heading_size | divided_by: 10.0 }}rem;
+    --gl-hero-heading-size-mobile: {{ s.heading_size_mobile | divided_by: 10.0 }}rem;
+    --gl-hero-text-size: {{ s.text_size | divided_by: 10.0 }}rem;
+    --gl-hero-padding-top: {{ s.padding_top }}px;
+    --gl-hero-padding-bottom: {{ s.padding_bottom }}px;
+    --gl-hero-bar-overlap: {{ s.bar_overlap }}px;
+  }
+{%- endstyle -%}
+
+<div class="gl-hero">
+  <div class="gl-hero__banner">
+    <div class="gl-hero__media">
+      {%- if s.image != blank -%}
+        {{ s.image | image_url: width: 1600 | image_tag: class: 'gl-hero__image', widths: '800, 1200, 1600', sizes: '100vw', loading: 'eager', alt: s.image.alt }}
+      {%- else -%}
+        <img class="gl-hero__image gl-hero__image--placeholder" src="{{ 'gl-ph-hero.svg' | asset_url }}" alt="" width="900" height="700" loading="eager">
+      {%- endif -%}
+    </div>
+    <div class="gl-hero__inner">
+      <div class="gl-hero__content">
+        {%- if s.eyebrow != blank -%}<p class="gl-hero__eyebrow">{{ s.eyebrow }}</p>{%- endif -%}
+        {%- if s.heading != blank -%}<h1 class="gl-hero__heading">{{ s.heading | escape | newline_to_br }}</h1>{%- endif -%}
+        {%- if s.show_divider -%}<div class="gl-hero__divider" aria-hidden="true"><span></span>{% render 'gl-icon', name: 'leaf' %}<span></span></div>{%- endif -%}
+        {%- if s.text != blank -%}<p class="gl-hero__text">{{ s.text | escape | newline_to_br }}</p>{%- endif -%}
+        <div class="gl-hero__buttons">
+          {%- if s.button_label != blank -%}
+            <a class="gl-hero__button" href="{{ s.button_link | default: '#' }}">
+              <span>{{ s.button_label }}</span>{% render 'gl-icon', name: 'arrow-right' %}
+            </a>
+          {%- endif -%}
+          {%- if s.video_label != blank -%}
+            <a class="gl-hero__video" href="{{ s.video_link | default: '#' }}">
+              <span class="gl-hero__video-icon">{% render 'gl-icon', name: 'play' %}</span>
+              <span>{{ s.video_label }}</span>
+            </a>
+          {%- endif -%}
+        </div>
+      </div>
+    </div>
+  </div>
+
+  {%- if features.size > 0 -%}
+    <div class="gl-hero__bar-wrap">
+      <ul class="gl-hero__bar">
+        {%- for block in features -%}
+          <li class="gl-hero__feature" {{ block.shopify_attributes }}>
+            <span class="gl-hero__feature-icon">{% render 'gl-icon', name: block.settings.icon %}</span>
+            <span class="gl-hero__feature-text">
+              <strong class="gl-hero__feature-title">{{ block.settings.title }}</strong>
+              <span class="gl-hero__feature-sub">{{ block.settings.text }}</span>
+            </span>
+          </li>
+        {%- endfor -%}
+      </ul>
+    </div>
+  {%- endif -%}
+</div>
+
+{% schema %}
+{
+  "name": "Glow Hero",
+  "tag": "section",
+  "class": "gl-section-hero",
+  "max_blocks": 4,
+  "settings": [
+    { "type": "header", "content": "Content" },
+    { "type": "image_picker", "id": "image", "label": "Hero image (empty = placeholder)" },
+    { "type": "text", "id": "eyebrow", "label": "Small heading", "default": "NATURALLY RADIANT" },
+    { "type": "textarea", "id": "heading", "label": "Heading (new line = line break)", "default": "Skincare\nthat cares,\nbeauty that\nshines." },
+    { "type": "checkbox", "id": "show_divider", "label": "Show leaf divider", "default": true },
+    { "type": "textarea", "id": "text", "label": "Text", "default": "Discover the perfect blend of nature and\nscience for healthy, glowing skin every day." },
+    { "type": "text", "id": "button_label", "label": "Button label", "default": "SHOP NOW" },
+    { "type": "url", "id": "button_link", "label": "Button link" },
+    { "type": "text", "id": "video_label", "label": "Video link label", "default": "WATCH VIDEO" },
+    { "type": "url", "id": "video_link", "label": "Video link" },
+    { "type": "header", "content": "Layout & spacing" },
+    { "type": "range", "id": "min_height", "label": "Banner min height", "min": 360, "max": 800, "step": 10, "unit": "px", "default": 560 },
+    { "type": "range", "id": "image_width", "label": "Image width (desktop)", "min": 40, "max": 100, "step": 1, "unit": "%", "default": 62 },
+    { "type": "range", "id": "overlay_strength", "label": "Left color fade over image", "min": 0, "max": 100, "step": 5, "unit": "%", "default": 70 },
+    { "type": "range", "id": "padding_top", "label": "Top padding", "min": 0, "max": 160, "step": 4, "unit": "px", "default": 72 },
+    { "type": "range", "id": "padding_bottom", "label": "Bottom padding", "min": 0, "max": 200, "step": 4, "unit": "px", "default": 100 },
+    { "type": "range", "id": "bar_overlap", "label": "Feature bar overlap on banner", "min": 0, "max": 160, "step": 4, "unit": "px", "default": 64 },
+    { "type": "header", "content": "Font sizes" },
+    { "type": "range", "id": "heading_size", "label": "Heading size (desktop)", "min": 28, "max": 96, "step": 1, "unit": "px", "default": 60 },
+    { "type": "range", "id": "heading_size_mobile", "label": "Heading size (mobile)", "min": 24, "max": 56, "step": 1, "unit": "px", "default": 38 },
+    { "type": "range", "id": "text_size", "label": "Text size", "min": 12, "max": 24, "step": 1, "unit": "px", "default": 15 },
+    { "type": "header", "content": "Colors (leave empty to use global Landing colors)" },
+    { "type": "color", "id": "bg_start", "label": "Banner gradient start" },
+    { "type": "color", "id": "bg_end", "label": "Banner gradient end" },
+    { "type": "color", "id": "eyebrow_color", "label": "Small heading" },
+    { "type": "color", "id": "heading_color", "label": "Heading" },
+    { "type": "color", "id": "text_color", "label": "Text" },
+    { "type": "color", "id": "button_bg", "label": "Button background" },
+    { "type": "color", "id": "button_color", "label": "Button text" },
+    { "type": "color", "id": "bar_bg", "label": "Feature bar background" },
+    { "type": "color", "id": "bar_icon_color", "label": "Feature icon" },
+    { "type": "color", "id": "bar_text_color", "label": "Feature text" }
+  ],
+  "blocks": [
+    {
+      "type": "feature",
+      "name": "Feature",
+      "settings": [
+        {
+          "type": "select",
+          "id": "icon",
+          "label": "Icon",
+          "options": [
+            { "value": "leaf", "label": "Leaf" },
+            { "value": "drop", "label": "Drop" },
+            { "value": "flask", "label": "Flask" },
+            { "value": "rabbit", "label": "Rabbit" },
+            { "value": "truck", "label": "Truck" },
+            { "value": "shield", "label": "Shield" },
+            { "value": "refresh", "label": "Refresh" },
+            { "value": "headset", "label": "Headset" }
+          ],
+          "default": "leaf"
+        },
+        { "type": "text", "id": "title", "label": "Title", "default": "Natural Ingredients" },
+        { "type": "text", "id": "text", "label": "Text", "default": "Safe & Effective" }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Glow Hero",
+      "blocks": [
+        { "type": "feature", "settings": { "icon": "leaf", "title": "Natural Ingredients", "text": "Safe & Effective" } },
+        { "type": "feature", "settings": { "icon": "drop", "title": "Dermatologist Tested", "text": "For All Skin Types" } },
+        { "type": "feature", "settings": { "icon": "flask", "title": "Paraben & Sulfate Free", "text": "Clean & Gentle" } },
+        { "type": "feature", "settings": { "icon": "rabbit", "title": "Cruelty Free", "text": "Never Tested on Animals" } }
+      ]
+    }
+  ]
+}
+{% endschema %}

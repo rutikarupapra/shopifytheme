@@ -1,0 +1,154 @@
+{%- liquid
+  assign s = section.settings
+-%}
+
+{%- style -%}
+  #shopify-section-{{ section.id }} .lm-footer {
+    {%- if s.bg_color != blank -%}--lm-footer-bg: {{ s.bg_color }};{%- endif -%}
+    {%- if s.heading_color != blank -%}--lm-footer-heading-color: {{ s.heading_color }};{%- endif -%}
+    {%- if s.text_color != blank -%}--lm-footer-text-color: {{ s.text_color }};{%- endif -%}
+    {%- if s.link_color != blank -%}--lm-footer-link-color: {{ s.link_color }};{%- endif -%}
+    {%- if s.line_color != blank -%}--lm-footer-line-color: {{ s.line_color }};{%- endif -%}
+    {%- if s.input_bg != blank -%}--lm-footer-input-bg: {{ s.input_bg }};{%- endif -%}
+    {%- if s.input_button_bg != blank -%}--lm-footer-input-button-bg: {{ s.input_button_bg }};{%- endif -%}
+    --lm-footer-heading-size: {{ s.heading_size | divided_by: 10.0 }}rem;
+    --lm-footer-text-size: {{ s.text_size | divided_by: 10.0 }}rem;
+    --lm-footer-logo-size: {{ s.logo_size | divided_by: 10.0 }}rem;
+    --lm-footer-padding-top: {{ s.padding_top }}px;
+    --lm-footer-padding-bottom: {{ s.padding_bottom }}px;
+  }
+{%- endstyle -%}
+
+<footer class="lm-footer">
+  <svg class="lm-footer__wave" viewBox="0 0 1440 80" preserveAspectRatio="none" aria-hidden="true"><path d="M0 80V40C240 -10 480 0 720 25s480 35 720-25v80z"/></svg>
+
+  <div class="lm-footer__inner">
+    <div class="lm-footer__grid">
+      <div class="lm-footer__brand">
+        <a class="lm-footer__logo" href="{{ routes.root_url }}">
+          {%- if s.logo != blank -%}
+            {{ s.logo | image_url: width: 500 | image_tag: class: 'lm-footer__logo-image', alt: shop.name, loading: 'lazy' }}
+          {%- else -%}
+            <span class="lm-footer__logo-icon">{% render 'lumashop-icon', name: 'bag' %}</span>
+            <span class="lm-footer__logo-text">{{ s.logo_text }}<span class="lm-footer__logo-script">{{ s.logo_script_text }}</span></span>
+          {%- endif -%}
+        </a>
+        {%- if s.tagline != blank -%}<p class="lm-footer__tagline">{{ s.tagline }}</p>{%- endif -%}
+      </div>
+
+      {%- for block in section.blocks -%}
+        {%- case block.type -%}
+          {%- when 'links' -%}
+            <div class="lm-footer__column lm-footer__column--links" {{ block.shopify_attributes }}>
+              <h3 class="lm-footer__heading">{{ block.settings.heading }}</h3>
+              {%- if block.settings.menu != blank -%}
+                <ul class="lm-footer__list">
+                  {%- for link in block.settings.menu.links -%}
+                    <li class="lm-footer__list-item"><a class="lm-footer__link" href="{{ link.url }}">{{ link.title }}</a></li>
+                  {%- endfor -%}
+                </ul>
+              {%- endif -%}
+            </div>
+          {%- when 'social' -%}
+            <div class="lm-footer__column lm-footer__column--social" {{ block.shopify_attributes }}>
+              <h3 class="lm-footer__heading">{{ block.settings.heading }}</h3>
+              <ul class="lm-footer__social">
+                {%- assign socials = 'facebook,instagram,tiktok,youtube' | split: ',' -%}
+                {%- for network in socials -%}
+                  {%- assign setting_key = 'social_' | append: network | append: '_link' -%}
+                  {%- assign url = settings[setting_key] -%}
+                  {%- if url != blank -%}
+                    <li class="lm-footer__social-item"><a class="lm-footer__social-link" href="{{ url }}" target="_blank" rel="noopener" aria-label="{{ network | capitalize }}">{% render 'lumashop-icon', name: network %}</a></li>
+                  {%- endif -%}
+                {%- endfor -%}
+                {%- if settings.social_facebook_link == blank and settings.social_instagram_link == blank and settings.social_tiktok_link == blank and settings.social_youtube_link == blank -%}
+                  {%- for network in socials -%}
+                    <li class="lm-footer__social-item"><a class="lm-footer__social-link" href="#" aria-label="{{ network | capitalize }}">{% render 'lumashop-icon', name: network %}</a></li>
+                  {%- endfor -%}
+                {%- endif -%}
+              </ul>
+              {%- if block.settings.show_newsletter -%}
+                {%- form 'customer', class: 'lm-footer__newsletter' -%}
+                  <input type="hidden" name="contact[tags]" value="newsletter">
+                  <input class="lm-footer__input" type="email" name="contact[email]" required autocomplete="email" placeholder="{{ block.settings.placeholder }}" aria-label="Email">
+                  <button class="lm-footer__submit" type="submit" aria-label="Subscribe">{% render 'lumashop-icon', name: 'send' %}</button>
+                  {%- if form.posted_successfully? -%}<p class="lm-footer__message">{{ block.settings.success_text }}</p>{%- endif -%}
+                {%- endform -%}
+              {%- endif -%}
+            </div>
+        {%- endcase -%}
+      {%- endfor -%}
+    </div>
+
+    <div class="lm-footer__bottom">
+      <p class="lm-footer__copyright">© {{ 'now' | date: '%Y' }} {{ shop.name }}. {{ s.copyright_text }}</p>
+      {%- if s.legal_menu != blank -%}
+        <ul class="lm-footer__legal">
+          {%- for link in s.legal_menu.links -%}
+            <li class="lm-footer__legal-item"><a class="lm-footer__legal-link" href="{{ link.url }}">{{ link.title }}</a></li>
+          {%- endfor -%}
+        </ul>
+      {%- endif -%}
+    </div>
+  </div>
+</footer>
+
+{% schema %}
+{
+  "name": "LumaShop Footer",
+  "class": "lm-section-footer",
+  "settings": [
+    { "type": "header", "content": "Brand" },
+    { "type": "image_picker", "id": "logo", "label": "Logo image (optional)" },
+    { "type": "text", "id": "logo_text", "label": "Logo text", "default": "Luma" },
+    { "type": "text", "id": "logo_script_text", "label": "Logo script text", "default": "Shop" },
+    { "type": "textarea", "id": "tagline", "label": "Tagline", "default": "Plus qu'une boutique, une expérience." },
+    { "type": "header", "content": "Bottom bar" },
+    { "type": "text", "id": "copyright_text", "label": "Copyright text", "default": "Tous droits réservés." },
+    { "type": "link_list", "id": "legal_menu", "label": "Legal menu", "default": "footer" },
+    { "type": "header", "content": "Spacing" },
+    { "type": "range", "id": "padding_top", "label": "Top padding", "min": 20, "max": 160, "step": 4, "unit": "px", "default": 56 },
+    { "type": "range", "id": "padding_bottom", "label": "Bottom padding", "min": 8, "max": 80, "step": 4, "unit": "px", "default": 24 },
+    { "type": "header", "content": "Font sizes" },
+    { "type": "range", "id": "logo_size", "label": "Logo text size", "min": 16, "max": 48, "step": 1, "unit": "px", "default": 24 },
+    { "type": "range", "id": "heading_size", "label": "Column heading size", "min": 11, "max": 22, "step": 1, "unit": "px", "default": 14 },
+    { "type": "range", "id": "text_size", "label": "Text / link size", "min": 10, "max": 20, "step": 1, "unit": "px", "default": 12 },
+    { "type": "header", "content": "Colors (leave empty to use global LumaShop colors)" },
+    { "type": "color", "id": "bg_color", "label": "Background" },
+    { "type": "color", "id": "heading_color", "label": "Headings / logo" },
+    { "type": "color", "id": "text_color", "label": "Text" },
+    { "type": "color", "id": "link_color", "label": "Links" },
+    { "type": "color", "id": "line_color", "label": "Divider line" },
+    { "type": "color", "id": "input_bg", "label": "Email field background" },
+    { "type": "color", "id": "input_button_bg", "label": "Email button background" }
+  ],
+  "blocks": [
+    {
+      "type": "links",
+      "name": "Link column",
+      "settings": [
+        { "type": "text", "id": "heading", "label": "Heading", "default": "Liens utiles" },
+        { "type": "link_list", "id": "menu", "label": "Menu", "default": "footer" }
+      ]
+    },
+    {
+      "type": "social",
+      "name": "Social & newsletter",
+      "limit": 1,
+      "settings": [
+        { "type": "text", "id": "heading", "label": "Heading", "default": "Suivez-nous" },
+        { "type": "checkbox", "id": "show_newsletter", "label": "Show email signup", "default": true },
+        { "type": "text", "id": "placeholder", "label": "Email placeholder", "default": "Votre adresse email" },
+        { "type": "text", "id": "success_text", "label": "Success message", "default": "Merci pour votre inscription !" }
+      ]
+    }
+  ],
+  "default": {
+    "blocks": [
+      { "type": "links" },
+      { "type": "links", "settings": { "heading": "Service client" } },
+      { "type": "social" }
+    ]
+  }
+}
+{% endschema %}

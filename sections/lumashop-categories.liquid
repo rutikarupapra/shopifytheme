@@ -1,0 +1,129 @@
+{%- liquid
+  assign s = section.settings
+  assign placeholders = 'cat-electronics,cat-fashion,cat-beauty,cat-home,cat-sport,cat-toys' | split: ','
+-%}
+
+{%- style -%}
+  #shopify-section-{{ section.id }} .lm-categories {
+    {%- if s.bg_color != blank -%}--lm-cat-bg: {{ s.bg_color }};{%- endif -%}
+    {%- if s.eyebrow_color != blank -%}--lm-cat-eyebrow-color: {{ s.eyebrow_color }};{%- endif -%}
+    {%- if s.heading_color != blank -%}--lm-cat-heading-color: {{ s.heading_color }};{%- endif -%}
+    {%- if s.tile_bg != blank -%}--lm-cat-tile-bg: {{ s.tile_bg }};{%- endif -%}
+    {%- if s.name_color != blank -%}--lm-cat-name-color: {{ s.name_color }};{%- endif -%}
+    {%- if s.button_color != blank -%}--lm-cat-button-color: {{ s.button_color }};{%- endif -%}
+    --lm-cat-columns: {{ s.columns_desktop }};
+    --lm-cat-columns-mobile: {{ s.columns_mobile }};
+    --lm-cat-heading-size: {{ s.heading_size | divided_by: 10.0 }}rem;
+    --lm-cat-eyebrow-size: {{ s.eyebrow_size | divided_by: 10.0 }}rem;
+    --lm-cat-name-size: {{ s.name_size | divided_by: 10.0 }}rem;
+    --lm-cat-tile-size: {{ s.tile_size }}px;
+    --lm-cat-padding-top: {{ s.padding_top }}px;
+    --lm-cat-padding-bottom: {{ s.padding_bottom }}px;
+  }
+{%- endstyle -%}
+
+<div class="lm-categories">
+  <div class="lm-categories__inner">
+    <div class="lm-categories__header">
+      <div class="lm-categories__titles">
+        {%- if s.eyebrow != blank -%}<p class="lm-categories__eyebrow">{{ s.eyebrow }}</p>{%- endif -%}
+        {%- if s.heading != blank -%}<h2 class="lm-categories__heading">{{ s.heading }}</h2>{%- endif -%}
+      </div>
+      {%- if s.button_label != blank -%}
+        <a class="lm-categories__button" href="{{ s.button_link | default: routes.collections_url }}">
+          <span class="lm-categories__button-label">{{ s.button_label }}</span>
+          {% render 'lumashop-icon', name: 'chevron-right' %}
+        </a>
+      {%- endif -%}
+    </div>
+
+    <ul class="lm-categories__list">
+      {%- for block in section.blocks -%}
+        {%- liquid
+          assign col = block.settings.collection
+          assign cat_title = block.settings.title
+          if cat_title == blank and col != blank
+            assign cat_title = col.title
+          endif
+          assign cat_link = block.settings.link
+          if cat_link == blank and col != blank
+            assign cat_link = col.url
+          endif
+          assign ph_index = forloop.index0 | modulo: 6
+          assign ph_name = placeholders[ph_index]
+        -%}
+        <li class="lm-categories__item" {{ block.shopify_attributes }}>
+          <a class="lm-categories__link" href="{{ cat_link | default: '#' }}">
+            <span class="lm-categories__tile">
+              {%- if block.settings.image != blank -%}
+                {{ block.settings.image | image_url: width: 400 | image_tag: class: 'lm-categories__image', widths: '200, 300, 400', loading: 'lazy' }}
+              {%- elsif col != blank and col.image != blank -%}
+                {{ col.image | image_url: width: 400 | image_tag: class: 'lm-categories__image', widths: '200, 300, 400', loading: 'lazy' }}
+              {%- else -%}
+                <img class="lm-categories__image lm-categories__image--placeholder" src="{{ ph_name | prepend: 'lumashop-ph-' | append: '.svg' | asset_url }}" alt="" width="400" height="400" loading="lazy">
+              {%- endif -%}
+            </span>
+            <span class="lm-categories__name">{{ cat_title | default: 'Category' }}</span>
+          </a>
+        </li>
+      {%- endfor -%}
+    </ul>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "LumaShop Categories",
+  "tag": "section",
+  "class": "lm-section-categories",
+  "settings": [
+    { "type": "header", "content": "Heading" },
+    { "type": "text", "id": "eyebrow", "label": "Small title", "default": "NOS CATÉGORIES" },
+    { "type": "text", "id": "heading", "label": "Heading", "default": "Trouvez ce que vous aimez" },
+    { "type": "text", "id": "button_label", "label": "'View all' label", "default": "Voir tout" },
+    { "type": "url", "id": "button_link", "label": "'View all' link" },
+    { "type": "header", "content": "Layout" },
+    { "type": "range", "id": "columns_desktop", "label": "Columns (desktop)", "min": 3, "max": 8, "step": 1, "default": 6 },
+    { "type": "range", "id": "columns_mobile", "label": "Columns (mobile)", "min": 2, "max": 4, "step": 1, "default": 3 },
+    { "type": "range", "id": "tile_size", "label": "Tile max size", "min": 80, "max": 260, "step": 10, "unit": "px", "default": 140 },
+    { "type": "range", "id": "padding_top", "label": "Top padding", "min": 0, "max": 120, "step": 4, "unit": "px", "default": 40 },
+    { "type": "range", "id": "padding_bottom", "label": "Bottom padding", "min": 0, "max": 120, "step": 4, "unit": "px", "default": 40 },
+    { "type": "header", "content": "Font sizes" },
+    { "type": "range", "id": "eyebrow_size", "label": "Small title size", "min": 9, "max": 18, "step": 1, "unit": "px", "default": 11 },
+    { "type": "range", "id": "heading_size", "label": "Heading size", "min": 18, "max": 56, "step": 1, "unit": "px", "default": 26 },
+    { "type": "range", "id": "name_size", "label": "Category name size", "min": 11, "max": 22, "step": 1, "unit": "px", "default": 13 },
+    { "type": "header", "content": "Colors (leave empty to use global LumaShop colors)" },
+    { "type": "color", "id": "bg_color", "label": "Section background" },
+    { "type": "color", "id": "eyebrow_color", "label": "Small title / line" },
+    { "type": "color", "id": "heading_color", "label": "Heading" },
+    { "type": "color", "id": "tile_bg", "label": "Tile background" },
+    { "type": "color", "id": "name_color", "label": "Category name" },
+    { "type": "color", "id": "button_color", "label": "'View all' button" }
+  ],
+  "blocks": [
+    {
+      "type": "category",
+      "name": "Category",
+      "settings": [
+        { "type": "collection", "id": "collection", "label": "Collection (optional)" },
+        { "type": "text", "id": "title", "label": "Title (empty = collection title)" },
+        { "type": "image_picker", "id": "image", "label": "Image (empty = collection image or placeholder)" },
+        { "type": "url", "id": "link", "label": "Link (empty = collection link)" }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "LumaShop Categories",
+      "blocks": [
+        { "type": "category", "settings": { "title": "Électronique" } },
+        { "type": "category", "settings": { "title": "Mode" } },
+        { "type": "category", "settings": { "title": "Beauté & Soins" } },
+        { "type": "category", "settings": { "title": "Maison & Déco" } },
+        { "type": "category", "settings": { "title": "Sport & Loisirs" } },
+        { "type": "category", "settings": { "title": "Jouets" } }
+      ]
+    }
+  ]
+}
+{% endschema %}

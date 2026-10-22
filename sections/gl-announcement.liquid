@@ -1,0 +1,68 @@
+{%- liquid
+  assign s = section.settings
+-%}
+
+{%- style -%}
+  #shopify-section-{{ section.id }} .gl-announce {
+    {%- if s.bg_color != blank -%}--gl-announce-bg: {{ s.bg_color }};{%- endif -%}
+    {%- if s.text_color != blank -%}--gl-announce-color: {{ s.text_color }};{%- endif -%}
+    --gl-announce-size: {{ s.text_size | divided_by: 10.0 }}rem;
+    --gl-announce-padding-y: {{ s.padding_y }}px;
+  }
+{%- endstyle -%}
+
+<div class="gl-announce">
+  <div class="gl-announce__inner">
+    <p class="gl-announce__text">
+      {%- if s.show_icon -%}{% render 'gl-icon', name: 'truck' %}{%- endif -%}
+      <span>{{ s.text }}</span>
+    </p>
+    {%- if section.blocks.size > 0 -%}
+      <ul class="gl-announce__links">
+        {%- for block in section.blocks -%}
+          <li class="gl-announce__item" {{ block.shopify_attributes }}>
+            <a class="gl-announce__link" href="{{ block.settings.link | default: '#' }}">{{ block.settings.label }}</a>
+          </li>
+        {%- endfor -%}
+      </ul>
+    {%- endif -%}
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Glow Announcement",
+  "class": "gl-section-announce",
+  "max_blocks": 6,
+  "settings": [
+    { "type": "text", "id": "text", "label": "Text", "default": "Free Shipping on Orders Over $50" },
+    { "type": "checkbox", "id": "show_icon", "label": "Show truck icon", "default": true },
+    { "type": "range", "id": "text_size", "label": "Text size", "min": 10, "max": 18, "step": 1, "unit": "px", "default": 12 },
+    { "type": "range", "id": "padding_y", "label": "Vertical padding", "min": 2, "max": 24, "step": 2, "unit": "px", "default": 10 },
+    { "type": "header", "content": "Colors (leave empty to use global Landing colors)" },
+    { "type": "color", "id": "bg_color", "label": "Background" },
+    { "type": "color", "id": "text_color", "label": "Text" }
+  ],
+  "blocks": [
+    {
+      "type": "link",
+      "name": "Link",
+      "settings": [
+        { "type": "text", "id": "label", "label": "Label", "default": "Track Order" },
+        { "type": "url", "id": "link", "label": "Link" }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Glow Announcement",
+      "blocks": [
+        { "type": "link", "settings": { "label": "Track Order" } },
+        { "type": "link", "settings": { "label": "FAQ" } },
+        { "type": "link", "settings": { "label": "Store Locator" } },
+        { "type": "link", "settings": { "label": "Contact Us" } }
+      ]
+    }
+  ]
+}
+{% endschema %}

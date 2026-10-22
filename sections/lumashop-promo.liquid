@@ -1,0 +1,88 @@
+{%- liquid
+  assign s = section.settings
+-%}
+
+{%- style -%}
+  #shopify-section-{{ section.id }} .lm-promo {
+    {%- if s.bg_start != blank -%}--lm-promo-bg-start: {{ s.bg_start }};{%- endif -%}
+    {%- if s.bg_end != blank -%}--lm-promo-bg-end: {{ s.bg_end }};{%- endif -%}
+    {%- if s.badge_bg != blank -%}--lm-promo-badge-bg: {{ s.badge_bg }};{%- endif -%}
+    {%- if s.badge_color != blank -%}--lm-promo-badge-color: {{ s.badge_color }};{%- endif -%}
+    {%- if s.heading_color != blank -%}--lm-promo-heading-color: {{ s.heading_color }};{%- endif -%}
+    {%- if s.text_color != blank -%}--lm-promo-text-color: {{ s.text_color }};{%- endif -%}
+    {%- if s.button_color != blank -%}--lm-promo-button-color: {{ s.button_color }};{%- endif -%}
+    --lm-promo-heading-size: {{ s.heading_size | divided_by: 10.0 }}rem;
+    --lm-promo-text-size: {{ s.text_size | divided_by: 10.0 }}rem;
+    --lm-promo-badge-size: {{ s.badge_size | divided_by: 10.0 }}rem;
+    --lm-promo-button-size: {{ s.button_size | divided_by: 10.0 }}rem;
+    --lm-promo-padding-top: {{ s.padding_top }}px;
+    --lm-promo-padding-bottom: {{ s.padding_bottom }}px;
+  }
+{%- endstyle -%}
+
+<div class="lm-promo">
+  <div class="lm-promo__inner">
+    <div class="lm-promo__content">
+      {%- if s.badge != blank -%}
+        <span class="lm-promo__badge">{% render 'lumashop-icon', name: s.badge_icon %}{{ s.badge }}</span>
+      {%- endif -%}
+      <h2 class="lm-promo__heading">
+        {%- if s.heading != blank -%}<span class="lm-promo__heading-line">{{ s.heading }}</span>{%- endif -%}
+        {%- if s.heading_2 != blank -%}<span class="lm-promo__heading-line">{{ s.heading_2 }}</span>{%- endif -%}
+      </h2>
+      {%- if s.text != blank -%}<p class="lm-promo__text">{{ s.text }}</p>{%- endif -%}
+      {%- if s.button_label != blank -%}
+        <a class="lm-promo__button" href="{{ s.button_link | default: '#' }}">
+          <span class="lm-promo__button-label">{{ s.button_label }}</span>
+          {% render 'lumashop-icon', name: 'chevron-right' %}
+        </a>
+      {%- endif -%}
+    </div>
+    <div class="lm-promo__media">
+      {%- if s.image != blank -%}
+        {{ s.image | image_url: width: 900 | image_tag: class: 'lm-promo__image', widths: '400, 600, 900', loading: 'lazy' }}
+      {%- else -%}
+        <img class="lm-promo__image lm-promo__image--placeholder" src="{{ 'lumashop-ph-promo.svg' | asset_url }}" alt="" width="600" height="400" loading="lazy">
+      {%- endif -%}
+    </div>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "LumaShop Promo Banner",
+  "tag": "section",
+  "class": "lm-section-promo",
+  "settings": [
+    { "type": "header", "content": "Content" },
+    { "type": "image_picker", "id": "image", "label": "Image (empty = placeholder)" },
+    { "type": "text", "id": "badge", "label": "Badge text", "default": "Livraison offerte" },
+    { "type": "select", "id": "badge_icon", "label": "Badge icon", "default": "truck", "options": [
+      { "value": "truck", "label": "Truck" }, { "value": "gift", "label": "Gift" }, { "value": "shield", "label": "Shield" },
+      { "value": "return", "label": "Return" }, { "value": "sparkle", "label": "Sparkle" }, { "value": "star", "label": "Star" }
+    ] },
+    { "type": "text", "id": "heading", "label": "Heading line 1", "default": "Profitez de la livraison gratuite" },
+    { "type": "text", "id": "heading_2", "label": "Heading line 2", "default": "à partir de 5 000 DA" },
+    { "type": "text", "id": "text", "label": "Text", "default": "Faites-vous plaisir, on s'occupe du reste !" },
+    { "type": "text", "id": "button_label", "label": "Button label", "default": "Voir les conditions" },
+    { "type": "url", "id": "button_link", "label": "Button link" },
+    { "type": "header", "content": "Spacing" },
+    { "type": "range", "id": "padding_top", "label": "Top padding", "min": 0, "max": 120, "step": 4, "unit": "px", "default": 24 },
+    { "type": "range", "id": "padding_bottom", "label": "Bottom padding", "min": 0, "max": 160, "step": 4, "unit": "px", "default": 60 },
+    { "type": "header", "content": "Font sizes" },
+    { "type": "range", "id": "badge_size", "label": "Badge size", "min": 9, "max": 18, "step": 1, "unit": "px", "default": 11 },
+    { "type": "range", "id": "heading_size", "label": "Heading size", "min": 18, "max": 60, "step": 1, "unit": "px", "default": 26 },
+    { "type": "range", "id": "text_size", "label": "Text size", "min": 11, "max": 22, "step": 1, "unit": "px", "default": 14 },
+    { "type": "range", "id": "button_size", "label": "Button text size", "min": 10, "max": 20, "step": 1, "unit": "px", "default": 12 },
+    { "type": "header", "content": "Colors (leave empty to use global LumaShop colors)" },
+    { "type": "color", "id": "bg_start", "label": "Background gradient start" },
+    { "type": "color", "id": "bg_end", "label": "Background gradient end" },
+    { "type": "color", "id": "badge_bg", "label": "Badge background" },
+    { "type": "color", "id": "badge_color", "label": "Badge text / border" },
+    { "type": "color", "id": "heading_color", "label": "Heading" },
+    { "type": "color", "id": "text_color", "label": "Text" },
+    { "type": "color", "id": "button_color", "label": "Button text / border" }
+  ],
+  "presets": [{ "name": "LumaShop Promo Banner" }]
+}
+{% endschema %}

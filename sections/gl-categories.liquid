@@ -1,0 +1,106 @@
+{%- liquid
+  assign s = section.settings
+-%}
+
+{%- style -%}
+  #shopify-section-{{ section.id }} .gl-cats {
+    {%- if s.bg_color != blank -%}--gl-cats-bg: {{ s.bg_color }};{%- endif -%}
+    {%- if s.heading_color != blank -%}--gl-cats-heading-color: {{ s.heading_color }};{%- endif -%}
+    {%- if s.circle_bg != blank -%}--gl-cats-circle-bg: {{ s.circle_bg }};{%- endif -%}
+    {%- if s.name_color != blank -%}--gl-cats-name-color: {{ s.name_color }};{%- endif -%}
+    {%- if s.link_color != blank -%}--gl-cats-link-color: {{ s.link_color }};{%- endif -%}
+    --gl-cats-columns: {{ s.columns_desktop }};
+    --gl-cats-columns-mobile: {{ s.columns_mobile }};
+    --gl-cats-circle-size: {{ s.circle_size }}px;
+    --gl-cats-heading-size: {{ s.heading_size | divided_by: 10.0 }}rem;
+    --gl-cats-name-size: {{ s.name_size | divided_by: 10.0 }}rem;
+    --gl-cats-padding-top: {{ s.padding_top }}px;
+    --gl-cats-padding-bottom: {{ s.padding_bottom }}px;
+  }
+{%- endstyle -%}
+
+<div class="gl-cats">
+  <div class="gl-cats__inner">
+    {%- if s.heading != blank -%}
+      <h2 class="gl-cats__heading">
+        <span class="gl-cats__line gl-cats__line--left" aria-hidden="true"></span>
+        <span class="gl-cats__heading-text">{{ s.heading }}</span>
+        <span class="gl-cats__line gl-cats__line--right" aria-hidden="true"></span>
+      </h2>
+    {%- endif -%}
+    <ul class="gl-cats__grid">
+      {%- for block in section.blocks -%}
+        {%- assign b = block.settings -%}
+        {%- assign url = b.link | default: b.collection.url | default: '#' -%}
+        {%- assign label = b.title | default: b.collection.title -%}
+        <li class="gl-cats__item" {{ block.shopify_attributes }}>
+          <a class="gl-cats__link" href="{{ url }}">
+            <span class="gl-cats__circle">
+              {%- if b.image != blank -%}
+                {{ b.image | image_url: width: 500 | image_tag: class: 'gl-cats__image', widths: '200, 300, 500', sizes: '(min-width: 990px) 200px, 33vw', loading: 'lazy', alt: label }}
+              {%- elsif b.collection.featured_image != blank -%}
+                {{ b.collection.featured_image | image_url: width: 500 | image_tag: class: 'gl-cats__image', widths: '200, 300, 500', sizes: '(min-width: 990px) 200px, 33vw', loading: 'lazy', alt: label }}
+              {%- else -%}
+                <img class="gl-cats__image gl-cats__image--placeholder" src="{{ 'gl-ph-cat.svg' | asset_url }}" alt="" width="300" height="300" loading="lazy">
+              {%- endif -%}
+            </span>
+            <span class="gl-cats__name">{{ label }}</span>
+            {%- if s.link_label != blank -%}<span class="gl-cats__explore">{{ s.link_label }}</span>{%- endif -%}
+          </a>
+        </li>
+      {%- endfor -%}
+    </ul>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Glow Categories",
+  "tag": "section",
+  "class": "gl-section-cats",
+  "max_blocks": 12,
+  "settings": [
+    { "type": "text", "id": "heading", "label": "Heading", "default": "SHOP BY CATEGORY" },
+    { "type": "text", "id": "link_label", "label": "Link label under each name", "default": "Explore" },
+    { "type": "range", "id": "columns_desktop", "label": "Columns (desktop)", "min": 3, "max": 8, "step": 1, "default": 6 },
+    { "type": "select", "id": "columns_mobile", "label": "Columns (mobile)", "options": [{ "value": "2", "label": "2" }, { "value": "3", "label": "3" }], "default": "3" },
+    { "type": "range", "id": "circle_size", "label": "Max circle size", "min": 80, "max": 240, "step": 10, "unit": "px", "default": 120 },
+    { "type": "range", "id": "padding_top", "label": "Top padding", "min": 0, "max": 120, "step": 4, "unit": "px", "default": 36 },
+    { "type": "range", "id": "padding_bottom", "label": "Bottom padding", "min": 0, "max": 120, "step": 4, "unit": "px", "default": 36 },
+    { "type": "header", "content": "Font sizes" },
+    { "type": "range", "id": "heading_size", "label": "Heading size", "min": 11, "max": 36, "step": 1, "unit": "px", "default": 14 },
+    { "type": "range", "id": "name_size", "label": "Name size", "min": 10, "max": 20, "step": 1, "unit": "px", "default": 12 },
+    { "type": "header", "content": "Colors (leave empty to use global Landing colors)" },
+    { "type": "color", "id": "bg_color", "label": "Background" },
+    { "type": "color", "id": "heading_color", "label": "Heading" },
+    { "type": "color", "id": "circle_bg", "label": "Circle background" },
+    { "type": "color", "id": "name_color", "label": "Name" },
+    { "type": "color", "id": "link_color", "label": "Link" }
+  ],
+  "blocks": [
+    {
+      "type": "category",
+      "name": "Category",
+      "settings": [
+        { "type": "collection", "id": "collection", "label": "Collection" },
+        { "type": "text", "id": "title", "label": "Title (empty = collection title)", "default": "Serums" },
+        { "type": "image_picker", "id": "image", "label": "Image (empty = collection image or placeholder)" },
+        { "type": "url", "id": "link", "label": "Link (empty = collection)" }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Glow Categories",
+      "blocks": [
+        { "type": "category", "settings": { "title": "Serums" } },
+        { "type": "category", "settings": { "title": "Moisturizers" } },
+        { "type": "category", "settings": { "title": "Cleansers" } },
+        { "type": "category", "settings": { "title": "Toners" } },
+        { "type": "category", "settings": { "title": "Eye Care" } },
+        { "type": "category", "settings": { "title": "Sun Care" } }
+      ]
+    }
+  ]
+}
+{% endschema %}

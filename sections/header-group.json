@@ -1,0 +1,13 @@
+{
+  "name": "Header group",
+  "type": "header",
+  "sections": {
+    "lumashop-header": {
+      "type": "lumashop-header",
+      "settings": {
+        "menu": "main-menu"
+      }
+    }
+  },
+  "order": ["lumashop-header"]
+}

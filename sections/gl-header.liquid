@@ -1,0 +1,98 @@
+{%- liquid
+  assign s = section.settings
+-%}
+
+{%- style -%}
+  #shopify-section-{{ section.id }} .gl-header {
+    {%- if s.bg_color != blank -%}--gl-header-bg: {{ s.bg_color }};{%- endif -%}
+    {%- if s.link_color != blank -%}--gl-header-link-color: {{ s.link_color }};{%- endif -%}
+    {%- if s.icon_color != blank -%}--gl-header-icon-color: {{ s.icon_color }};{%- endif -%}
+    {%- if s.badge_bg != blank -%}--gl-header-badge-bg: {{ s.badge_bg }};{%- endif -%}
+    --gl-header-link-size: {{ s.link_size | divided_by: 10.0 }}rem;
+    --gl-header-logo-size: {{ s.logo_size | divided_by: 10.0 }}rem;
+    --gl-header-logo-image-width: {{ s.logo_image_width }}px;
+    --gl-header-icon-size: {{ s.icon_size }}px;
+    --gl-header-padding-y: {{ s.padding_y }}px;
+  }
+{%- endstyle -%}
+
+<header class="gl-header{% if s.sticky %} gl-header--sticky{% endif %}" data-gl-header>
+  <div class="gl-header__inner">
+    <a class="gl-header__logo" href="{{ routes.root_url }}">
+      {%- if s.logo != blank -%}
+        {{ s.logo | image_url: width: 600 | image_tag: class: 'gl-header__logo-image', alt: shop.name, loading: 'eager' }}
+      {%- else -%}
+        <span class="gl-header__logo-mark">{% render 'gl-icon', name: 'leaf' %}</span>
+        <span class="gl-header__logo-words">
+          <span class="gl-header__logo-text">{{ s.logo_text }}</span>
+          {%- if s.tagline != blank -%}<span class="gl-header__logo-tagline">{{ s.tagline }}</span>{%- endif -%}
+        </span>
+      {%- endif -%}
+    </a>
+
+    <nav class="gl-header__nav" id="gl-header-nav" aria-label="Main menu">
+      {%- if s.menu != blank and s.menu.links.size > 0 -%}
+        <ul class="gl-header__menu">
+          {%- for link in s.menu.links -%}
+            <li class="gl-header__menu-item{% if link.active or link.child_active or link.current %} gl-header__menu-item--active{% endif %}">
+              <a class="gl-header__menu-link" href="{{ link.url }}"{% if link.current %} aria-current="page"{% endif %}>{{ link.title }}</a>
+            </li>
+          {%- endfor -%}
+        </ul>
+      {%- else -%}
+        <p class="gl-header__menu-empty">Select a menu in the section settings.</p>
+      {%- endif -%}
+    </nav>
+
+    <div class="gl-header__actions">
+      {%- if s.show_search -%}
+        <a class="gl-header__action" href="{{ routes.search_url }}" aria-label="Search">{% render 'gl-icon', name: 'search' %}</a>
+      {%- endif -%}
+      {%- if s.show_account -%}
+        <a class="gl-header__action" href="{{ routes.account_url }}" aria-label="Account">{% render 'gl-icon', name: 'user' %}</a>
+      {%- endif -%}
+      {%- if s.show_cart -%}
+        <a class="gl-header__action gl-header__action--cart" href="{{ routes.cart_url }}" aria-label="Cart">
+          {% render 'gl-icon', name: 'bag' %}
+          <span class="gl-header__cart-count"{% if cart.item_count == 0 and s.hide_empty_count %} hidden{% endif %}>{{ cart.item_count }}</span>
+        </a>
+      {%- endif -%}
+      <button type="button" class="gl-header__action gl-header__toggle" aria-expanded="false" aria-controls="gl-header-nav" data-gl-nav-toggle aria-label="Menu">
+        <span class="gl-header__toggle-open">{% render 'gl-icon', name: 'menu' %}</span>
+        <span class="gl-header__toggle-close">{% render 'gl-icon', name: 'close' %}</span>
+      </button>
+    </div>
+  </div>
+</header>
+
+{% schema %}
+{
+  "name": "Glow Header",
+  "class": "gl-section-header",
+  "settings": [
+    { "type": "header", "content": "Logo" },
+    { "type": "image_picker", "id": "logo", "label": "Logo image (optional, replaces text logo)" },
+    { "type": "range", "id": "logo_image_width", "label": "Logo image width", "min": 80, "max": 300, "step": 10, "unit": "px", "default": 160 },
+    { "type": "text", "id": "logo_text", "label": "Logo text", "default": "Glowérive" },
+    { "type": "text", "id": "tagline", "label": "Logo tagline", "default": "NATURAL SKINCARE" },
+    { "type": "range", "id": "logo_size", "label": "Logo text size", "min": 16, "max": 48, "step": 1, "unit": "px", "default": 28 },
+    { "type": "header", "content": "Menu & icons" },
+    { "type": "link_list", "id": "menu", "label": "Menu", "default": "main-menu" },
+    { "type": "range", "id": "link_size", "label": "Menu link size", "min": 10, "max": 18, "step": 1, "unit": "px", "default": 12 },
+    { "type": "range", "id": "icon_size", "label": "Icon size", "min": 16, "max": 36, "step": 1, "unit": "px", "default": 22 },
+    { "type": "checkbox", "id": "show_search", "label": "Show search icon", "default": true },
+    { "type": "checkbox", "id": "show_account", "label": "Show account icon", "default": true },
+    { "type": "checkbox", "id": "show_cart", "label": "Show cart icon", "default": true },
+    { "type": "checkbox", "id": "hide_empty_count", "label": "Hide cart count when cart is empty", "default": false },
+    { "type": "header", "content": "Layout" },
+    { "type": "checkbox", "id": "sticky", "label": "Sticky header", "default": false },
+    { "type": "range", "id": "padding_y", "label": "Vertical padding", "min": 0, "max": 40, "step": 2, "unit": "px", "default": 16 },
+    { "type": "header", "content": "Colors (leave empty to use global Landing colors)" },
+    { "type": "color", "id": "bg_color", "label": "Background" },
+    { "type": "color", "id": "link_color", "label": "Menu link" },
+    { "type": "color", "id": "icon_color", "label": "Icons" },
+    { "type": "color", "id": "badge_bg", "label": "Cart count badge" }
+  ],
+  "presets": [{ "name": "Glow Header" }]
+}
+{% endschema %}

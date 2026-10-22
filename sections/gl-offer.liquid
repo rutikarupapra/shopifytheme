@@ -1,0 +1,78 @@
+{%- liquid
+  assign s = section.settings
+-%}
+
+{%- style -%}
+  #shopify-section-{{ section.id }} .gl-offer {
+    {%- if s.bg_start != blank -%}--gl-offer-bg-start: {{ s.bg_start }};{%- endif -%}
+    {%- if s.bg_end != blank -%}--gl-offer-bg-end: {{ s.bg_end }};{%- endif -%}
+    {%- if s.eyebrow_color != blank -%}--gl-offer-eyebrow-color: {{ s.eyebrow_color }};{%- endif -%}
+    {%- if s.heading_color != blank -%}--gl-offer-heading-color: {{ s.heading_color }};{%- endif -%}
+    {%- if s.text_color != blank -%}--gl-offer-text-color: {{ s.text_color }};{%- endif -%}
+    --gl-offer-image-width: {{ s.image_width }}%;
+    --gl-offer-heading-size: {{ s.heading_size | divided_by: 10.0 }}rem;
+    --gl-offer-text-size: {{ s.text_size | divided_by: 10.0 }}rem;
+    --gl-offer-min-height: {{ s.min_height }}px;
+    --gl-offer-padding-top: {{ s.padding_top }}px;
+    --gl-offer-padding-bottom: {{ s.padding_bottom }}px;
+  }
+{%- endstyle -%}
+
+<div class="gl-offer">
+  <div class="gl-offer__inner">
+    <div class="gl-offer__card">
+      <div class="gl-offer__media">
+        {%- if s.image != blank -%}
+          {{ s.image | image_url: width: 1000 | image_tag: class: 'gl-offer__image', widths: '500, 800, 1000', sizes: '(min-width: 990px) 40vw, 100vw', loading: 'lazy', alt: s.image.alt }}
+        {%- else -%}
+          <img class="gl-offer__image gl-offer__image--placeholder" src="{{ 'gl-ph-offer.svg' | asset_url }}" alt="" width="700" height="400" loading="lazy">
+        {%- endif -%}
+      </div>
+      <div class="gl-offer__content">
+        {%- if s.eyebrow != blank -%}<p class="gl-offer__eyebrow">{{ s.eyebrow }}</p>{%- endif -%}
+        {%- if s.heading != blank -%}<h2 class="gl-offer__heading">{{ s.heading | escape | newline_to_br }}</h2>{%- endif -%}
+        {%- if s.text != blank -%}<p class="gl-offer__text">{{ s.text | escape | newline_to_br }}</p>{%- endif -%}
+      </div>
+      {%- if s.join_title != blank -%}
+        <a class="gl-offer__join" href="{{ s.join_link | default: '#' }}">
+          <span class="gl-offer__join-icon">{% render 'gl-icon', name: 'mail' %}</span>
+          <strong class="gl-offer__join-title">{{ s.join_title }}</strong>
+          <span class="gl-offer__join-text">{{ s.join_text }}</span>
+        </a>
+      {%- endif -%}
+    </div>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Glow Offer Banner",
+  "tag": "section",
+  "class": "gl-section-offer",
+  "settings": [
+    { "type": "header", "content": "Content" },
+    { "type": "image_picker", "id": "image", "label": "Image (empty = placeholder)" },
+    { "type": "text", "id": "eyebrow", "label": "Small heading", "default": "SPECIAL OFFER" },
+    { "type": "textarea", "id": "heading", "label": "Heading (new line = line break)", "default": "Get 20% Off\nYour First Order" },
+    { "type": "textarea", "id": "text", "label": "Text", "default": "Join our glow club & unlock exclusive\noffers and skincare tips." },
+    { "type": "text", "id": "join_title", "label": "Right box title (empty = hide)", "default": "JOIN NOW" },
+    { "type": "textarea", "id": "join_text", "label": "Right box text", "default": "Be the first to know about new arrivals & exclusive deals." },
+    { "type": "url", "id": "join_link", "label": "Right box link" },
+    { "type": "header", "content": "Layout & spacing" },
+    { "type": "range", "id": "image_width", "label": "Image width (desktop)", "min": 20, "max": 60, "step": 1, "unit": "%", "default": 38 },
+    { "type": "range", "id": "min_height", "label": "Banner min height", "min": 120, "max": 400, "step": 10, "unit": "px", "default": 190 },
+    { "type": "range", "id": "padding_top", "label": "Top padding", "min": 0, "max": 120, "step": 4, "unit": "px", "default": 36 },
+    { "type": "range", "id": "padding_bottom", "label": "Bottom padding", "min": 0, "max": 120, "step": 4, "unit": "px", "default": 36 },
+    { "type": "header", "content": "Font sizes" },
+    { "type": "range", "id": "heading_size", "label": "Heading size", "min": 20, "max": 64, "step": 1, "unit": "px", "default": 34 },
+    { "type": "range", "id": "text_size", "label": "Text size", "min": 11, "max": 22, "step": 1, "unit": "px", "default": 14 },
+    { "type": "header", "content": "Colors (leave empty to use global Landing colors)" },
+    { "type": "color", "id": "bg_start", "label": "Background gradient start" },
+    { "type": "color", "id": "bg_end", "label": "Background gradient end" },
+    { "type": "color", "id": "eyebrow_color", "label": "Small heading" },
+    { "type": "color", "id": "heading_color", "label": "Heading" },
+    { "type": "color", "id": "text_color", "label": "Text" }
+  ],
+  "presets": [{ "name": "Glow Offer Banner" }]
+}
+{% endschema %}
